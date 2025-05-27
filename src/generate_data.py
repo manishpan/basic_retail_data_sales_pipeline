@@ -57,7 +57,7 @@ for _ in range(NUM_SALES):
     product = random.choice(products)
     store = random.choice(stores)
     quantity = random.randint(1, 5)
-    sale_date = fake.date_between(start_date='-6M', end_date='today')
+    sale_date = fake.date_between(start_date='-12M', end_date='today')
 
     sales.append({
         'transaction_id': str(uuid.uuid4()),
