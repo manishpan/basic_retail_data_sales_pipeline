@@ -9,6 +9,7 @@ required_columns_maps = {'products': ['product_id', 'name', 'cost_price'],
 products_schema = StructType([
     StructField('product_id', IntegerType(), False),
     StructField('name', StringType(), False),
+    StructField('category', StringType(), True),
     StructField('cost_price', StringType(), False)
 ])
 

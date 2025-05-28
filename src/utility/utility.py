@@ -1,6 +1,9 @@
 import os
-from utility.logging_config import logger
-
+import sys
+sys.path.append('/home/manish/Documents/Spark-Tutorial/DE_Complete_Project_1/retail_sales_pipeline/configs/')
+sys.path.append('/home/manish/Documents/Spark-Tutorial/DE_Complete_Project_1/retail_sales_pipeline/src/utility/')
+import config
+from logging_config import logger
 """ 
     read_csv_file helper function
     Args:
@@ -85,3 +88,47 @@ def sales_join_products(df_sales, df_products):
 """
 def sales_join_stores(df_sales, df_stores):
     return df_sales.join(df_stores, on = ['store_id'], how = 'inner').dropDuplicates()
+
+"""
+    write_to_local(df, name) writes name.csv to config.processed_folder_path
+    Args:
+        df -> dataframe to be written
+        name -> name of the file after writing df
+"""
+def write_to_local(df, filename = None):
+    if not filename:
+        logger.error(f"❌ Error! File must have a name")
+        raise ValueError('Filename cannot be None')
+    save_path = f"{config.processed_folder_path}/{filename}"
+
+    logger.info(f"🧵 Writing {filename}.csv to {save_path}")
+    df.write.format('csv').option('header', 'true').mode('OVERWRITE').save(save_path)
+    logger.info(f"✅ {filename}.csv written successfully")
+
+    return True
+
+class DatabaseWrite:
+    def __init__(self, url, properties):
+        self.url = url
+        self.properties = properties
+
+    def write_dataframe(self, df, table_name):
+        try:
+            logger.info(f"🧵 Writing into {table_name}")
+            df.write.jdbc(url = self.url,
+                        table = table_name,
+                        mode = 'append',
+                        properties = self.properties)
+            logger.info(f"✅ Data successfully written into {table_name}")
+        except Exception as e:
+            logger.error(f"❌ Error writing to {table_name}: {e}")
+            raise e
+        
+def write_to_database(df, table_name = None):
+    if table_name is None:
+        logger.error(f"❌ Error! table_name must be provided")
+        raise ValueError('table_name cannot be None')
+
+    dbw = DatabaseWrite(config.url, config.properties)
+    dbw.write_dataframe(df, table_name)
+    return True

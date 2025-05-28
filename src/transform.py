@@ -1,7 +1,9 @@
-from utility.logging_config import logger
-from extract import *
-from utility.schemas import required_columns_maps, df_schemas
-from utility.utility import missing_columns, check_schema, sales_join_products, sales_join_stores
+import sys
+sys.path.append('/home/manish/Documents/Spark-Tutorial/DE_Complete_Project_1/retail_sales_pipeline/src/utility/')
+from logging_config import logger
+from src.extract import *
+from schemas import required_columns_maps, df_schemas
+from utility import missing_columns, check_schema, sales_join_products, sales_join_stores
 from pyspark.sql.types import StructType, StructField, StringType, StringType, IntegerType, DoubleType, DateType
 from pyspark.sql.functions import *
 
